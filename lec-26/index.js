@@ -4,7 +4,37 @@ const mongoose= require("mongoose");
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 const User= require("./model/user")
+const jwt= require("jsonwebtoken");
+function verifyToken(req,res,next){
+    let token= req.headers.authorization;
+    console.log(token);
+    if(!token){
+        return res.json({
+            success:false,
+            message:"token required"
+        })
+    }
+    let decode= jwt.verify(token,"jaishreeram");
+    console.log(decode);
+    if(!decode){
+        return res.json({
+            success:false,
+            message:"Invalid token"
+        })
+    }
+    req.user_id=decode.id;
+    next()
+    //req se token mango,
+    //token ko verify
+    //req ko aage bhj do
 
+}
+app.get("/home",verifyToken,async (req,res)=>{
+    let userId= req.user_id;
+    let user= await User.findById(userId);
+    let username= user.username;
+    res.send("Home page"+ " "+ username)
+})
 app.post("/api/users/signup",async(req,res)=>{
     let {username,email,password} = req.body;
     let userExist=await User.findOne({email:email});
@@ -41,9 +71,12 @@ app.post("/api/auth/login",async(req,res)=>{
         })
     }
     //create token to store user state using jwt
+    let token= jwt.sign({id:userExist._id},"jaishreeram")
+    console.log(token)
     res.json({
         success:true,
-        message:"login successfull"
+        message:"login successfull",
+        token:token
     })
 
 
