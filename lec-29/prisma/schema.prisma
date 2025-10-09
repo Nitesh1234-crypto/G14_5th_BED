@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int      @id @default(autoincrement()) //@id---->primary key
+  email   String   @unique //unique index-->cannot be repeated
+  name    String? @default("xyz")
+}
+//1st insert --->1 user-1
+//2nd insert --->2 user-2
+//3rd insert --->3 x
+//4th insert----->4 user--4
