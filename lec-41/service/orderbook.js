@@ -49,10 +49,13 @@ class Orderbook{
                     this.ask.push(result);
                     this._sort("SELL")
                 }
+
             }
+            return {orderStatus:result,book:this.getBook()};
         }
         else if(type==="MARKET"){
             let result = this._marketMatch(newOrder);
+            return {orderStatus:result,book:this.getBook()};
         }else{
             return "Type not found"
         }
@@ -235,3 +238,5 @@ console.log(BTCUSD.getBook());
 // },
 
 // ]
+
+module.exports=Orderbook;
